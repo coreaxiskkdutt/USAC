@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register — UA/UC Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-brand">
+      <div class="brand-mark" style="margin:0 auto 14px;width:48px;height:48px;"></div>
+      <div class="auth-title">Create Account</div>
+      <div class="auth-sub">Register for the UA/UC Reporting System</div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash flash-{{ category }}">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" novalidate>
+      {{ form.hidden_tag() }}
+
+      <div class="field">
+        <label>Full Name</label>
+        {{ form.full_name(placeholder="e.g. Juan Dela Cruz") }}
+        {% for e in form.full_name.errors %}<div style="color:var(--red);font-size:11px;margin-top:4px;">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Username</label>
+          {{ form.username(placeholder="e.g. jdelacruz") }}
+          {% for e in form.username.errors %}<div style="color:var(--red);font-size:11px;margin-top:4px;">{{ e }}</div>{% endfor %}
+        </div>
+        <div class="field">
+          <label>Email</label>
+          {{ form.email(placeholder="you@company.com") }}
+          {% for e in form.email.errors %}<div style="color:var(--red);font-size:11px;margin-top:4px;">{{ e }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div class="field">
+          <label>Designation</label>
+          {{ form.designation() }}
+        </div>
+        <div class="field">
+          <label>Department</label>
+          {{ form.department() }}
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Password</label>
+        {{ form.password(placeholder="Min. 6 characters", autocomplete="new-password") }}
+        {% for e in form.password.errors %}<div style="color:var(--red);font-size:11px;margin-top:4px;">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="field">
+        <label>Confirm Password</label>
+        {{ form.password_confirm(placeholder="Re-enter password", autocomplete="new-password") }}
+        {% for e in form.password_confirm.errors %}<div style="color:var(--red);font-size:11px;margin-top:4px;">{{ e }}</div>{% endfor %}
+      </div>
+
+      <div class="locked-note" style="margin-bottom:14px;">
+        Your account will be reviewed and approved by a Safety Officer before you can log in.
+      </div>
+
+      {{ form.submit(class="modal-submit") }}
+    </form>
+
+    <div class="auth-link">
+      Already have an account? <a href="{{ url_for('login') }}">Log in here</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>

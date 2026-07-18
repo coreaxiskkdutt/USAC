@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Manage Users{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="page-title">User Management</div>
+    <div class="page-sub">View, promote, demote, and delete all user accounts.</div>
+  </div>
+</div>
+
+<div class="table-wrap">
+  <table class="table">
+    <thead>
+      <tr><th>Name</th><th>Username</th><th>Role</th><th>Designation</th><th>Department</th><th>Status</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr>
+        <td style="color:var(--paper);font-weight:500;">{{ user.full_name }}</td>
+        <td>@{{ user.username }}</td>
+        <td>
+          {% if user.is_admin %}
+          <span style="color:var(--blue);font-weight:600;">Admin</span>
+          {% elif user.is_safety_officer %}
+          <span style="color:var(--amber);font-weight:600;">Safety Officer</span>
+          {% else %}
+          <span style="color:var(--paper-dim);">Employee</span>
+          {% endif %}
+        </td>
+        <td>{{ user.designation }}</td>
+        <td>{{ user.department }}</td>
+        <td>
+          {% if user.is_approved or user.role != 'employee' %}
+          <span style="color:var(--green);font-family:var(--font-mono);font-size:11px;">APPROVED</span>
+          {% else %}
+          <span style="color:var(--amber);font-family:var(--font-mono);font-size:11px;">PENDING</span>
+          {% endif %}
+        </td>
+        <td>
+          {% if not user.is_admin %}
+          <div style="display:flex;gap:6px;">
+            <form method="POST" action="{{ url_for('admin_toggle_role', user_id=user.id) }}" onsubmit="return confirm('Change role for {{ user.full_name }}?');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              {% if user.role == 'employee' %}
+              <button type="submit" class="action-btn" title="Promote to Safety Officer">Promote</button>
+              {% else %}
+              <button type="submit" class="action-btn" title="Demote to Employee">Demote</button>
+              {% endif %}
+            </form>
+            <form method="POST" action="{{ url_for('admin_delete_user', user_id=user.id) }}" onsubmit="return confirm('Delete {{ user.full_name }}? This cannot be undone.');">
+              <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+              <button type="submit" class="action-btn danger">Delete</button>
+            </form>
+          </div>
+          {% else %}
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--slate);">SUPERUSER</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

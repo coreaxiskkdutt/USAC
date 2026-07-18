@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Add Safety Officer{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="page-title">Add Safety Officer</div>
+    <div class="page-sub">Create a Safety Officer account with full investigation and report management privileges.</div>
+  </div>
+  <a href="{{ url_for('manage_approvals') }}" class="btn-ghost">&larr; Back</a>
+</div>
+
+<div style="max-width:520px;">
+  <div style="background:var(--bg-raised);border:1px solid var(--line-light);border-radius:var(--radius);padding:28px;">
+    <form method="POST" novalidate>
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" name="full_name" placeholder="e.g. Jane Smith" required>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Username</label>
+          <input type="text" name="username" placeholder="e.g. jsmith" required minlength="3">
+        </div>
+        <div class="field">
+          <label>Email</label>
+          <input type="email" name="email" placeholder="jane@company.com" required>
+        </div>
+      </div>
+      <div class="row-2">
+        <div class="field">
+          <label>Designation</label>
+          <select name="designation" required>
+            {% for d in DESIGNATIONS %}
+            <option value="{{ d }}">{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label>Department</label>
+          <select name="department" required>
+            {% for d in ['Operations','Maintenance','Engineering','HSE','Human Resources','Procurement','Logistics','Quality','IT','Finance','Admin','Other'] %}
+            <option value="{{ d }}" {{ 'selected' if d == 'HSE' }}>{{ d }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" name="password" placeholder="Min. 6 characters" required minlength="6">
+      </div>
+      <button type="submit" class="modal-submit">Create Safety Officer Account</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

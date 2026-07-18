@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="topbar">
+  <div>
+    <div class="page-title">Unsafe Acts &amp; Unsafe Conditions</div>
+    <div class="page-sub">Report and track hazards before they become incidents. Every entry below is a live tag until it's closed out.</div>
+  </div>
+  <a href="{{ url_for('new_report') }}" class="btn-primary">&#43; New report</a>
+</div>
+
+<div class="stat-strip">
+  <div class="stat"><div class="stat-num">{{ total_reports }}</div><div class="stat-label">Total logged</div></div>
+  <div class="stat"><div class="stat-num red">{{ open_reports }}</div><div class="stat-label">Open</div></div>
+  <div class="stat"><div class="stat-num amber">{{ unsafe_acts }}</div><div class="stat-label">Unsafe Acts</div></div>
+  <div class="stat"><div class="stat-num green">{{ closed_reports }}</div><div class="stat-label">Closed</div></div>
+</div>
+
+<div class="ledger">
+  {% if recent_reports %}
+    {% for r in recent_reports %}
+    <div class="tag">
+      <div class="tag-spine {{ 'act' if r.report_type == 'Unsafe Act' else 'cond' }}">{{ r.report_type }}</div>
+      <div class="tag-body">
+        <div class="tag-toprow">
+          <div>
+            <div class="tag-id">{{ r.report_number }} &mdash; filed {{ r.date_observed.strftime('%b %d, %Y') }}</div>
+            <div class="tag-title">{{ r.title }}</div>
+          </div>
+          <div class="status-stamp
+            {% if r.status == 'Open' %}status-open
+            {% elif r.status == 'Closed' %}status-closed
+            {% else %}status-progress{% endif %}">{{ r.status }}</div>
+        </div>
+        <div class="tag-desc">{{ r.description[:160] }}{% if r.description|length > 160 %}&hellip;{% endif %}</div>
+        <div class="badge-row">
+          <span class="sev-badge sev-{{ r.severity|lower }}">Severity: {{ r.severity }}</span>
+        </div>
+        <div class="tag-meta">
+          <span><b>Location</b> &nbsp;{{ r.location }}</span>
+          <span><b>Reported by</b> &nbsp;{{ r.reported_by }}</span>
+          <span><b>Dept</b> &nbsp;{{ r.department }}</span>
+        </div>
+        <div class="tag-actions">
+          <a href="{{ url_for('view_report', report_id=r.id) }}" class="action-btn">View details</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div style="text-align:center;margin-top:10px;">
+      <a href="{{ url_for('reports_list') }}" class="btn-ghost">View all reports &rarr;</a>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <b>No reports yet</b>
+      Log your first hazard to get the register started.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}
