@@ -255,7 +255,7 @@ def inject_globals():
     }
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def login():
     if "user_id" in session:
         return redirect(url_for("dashboard"))
