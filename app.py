@@ -149,7 +149,7 @@ def safety_officer_required(f):
         user = db.session.get(User, session["user_id"])
         if not user or not user.can_manage_users:
             flash("Access denied. Safety Officer or Admin role required.", "danger")
-            return redirect(url_for("index"))
+            return redirect(url_for("dashboard"))
         return f(*args, **kwargs)
     return decorated
 
@@ -163,7 +163,7 @@ def admin_required(f):
         user = db.session.get(User, session["user_id"])
         if not user or not user.is_admin:
             flash("Access denied. Admin role required.", "danger")
-            return redirect(url_for("index"))
+            return redirect(url_for("dashboard"))
         return f(*args, **kwargs)
     return decorated
 
@@ -255,10 +255,10 @@ def inject_globals():
     }
 
 
-@app.route("/login", methods=["GET", "POST"])
+@app.route("/")
 def login():
     if "user_id" in session:
-        return redirect(url_for("index"))
+        return redirect(url_for("dashboard"))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -268,7 +268,7 @@ def login():
                 return redirect(url_for("login"))
             session["user_id"] = user.id
             flash(f"Welcome back, {user.full_name}!", "success")
-            return redirect(url_for("index"))
+            return redirect(url_for("dashboard"))
         flash("Invalid username or password.", "danger")
     return render_template("login.html", form=form)
 
@@ -276,7 +276,7 @@ def login():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if "user_id" in session:
-        return redirect(url_for("index"))
+        return redirect(url_for("dashboard"))
     form = RegisterForm()
     if form.validate_on_submit():
         user = User(
@@ -421,8 +421,9 @@ def admin_toggle_role(user_id):
     return redirect(url_for("admin_users"))
 
 
-@app.route("/")
-def index():
+@app.route("/dashboard")
+@login_required
+def dashboard():
     total_reports = Report.query.count()
     unsafe_acts = Report.query.filter_by(report_type="Unsafe Act").count()
     unsafe_conditions = Report.query.filter_by(report_type="Unsafe Condition").count()

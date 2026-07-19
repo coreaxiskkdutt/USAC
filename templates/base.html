@@ -19,7 +19,7 @@
 
     {% if current_user %}
     <div class="nav-label">Navigation</div>
-    <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+    <a class="nav-link {% if request.endpoint == 'dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
       <span class="nav-dot"></span> Dashboard
     </a>
     <a class="nav-link {% if request.endpoint == 'reports_list' %}active{% endif %}" href="{{ url_for('reports_list') }}">
